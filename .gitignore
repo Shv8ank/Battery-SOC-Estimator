@@ -1,0 +1,23 @@
+# Virtual Environment
+.venv/
+
+# Python cache
+__pycache__/
+*.py[cod]
+
+# VS Code settings
+.vscode/
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# macOS
+.DS_Store
+
+# Generated output files
+outputs/plots/*
+outputs/reports/*
+
+# Keep the folders even when empty
+!outputs/plots/.gitkeep
+!outputs/reports/.gitkeep
