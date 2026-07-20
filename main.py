@@ -1,5 +1,6 @@
 from src.data_loader import load_battery_data
 from src.soc_estimator import estimate_soc
+from src.exporter import export_soc_data
 from src.visualization import (
     plot_voltage_vs_time,
     plot_soc_vs_time,
@@ -28,6 +29,7 @@ def main():
     print("\nPlots saved successfully!")
     print("Location: outputs/plots/")
 
+    export_soc_data(battery_data)
 
 if __name__ == "__main__":
     main()
