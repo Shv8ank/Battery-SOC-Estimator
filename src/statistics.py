@@ -29,12 +29,23 @@ def print_summary(summary: dict) -> None:
     Print battery analysis summary.
     """
 
-    print("\n" + "=" * 35)
-    print(" Battery Analysis Summary")
-    print("=" * 35)
+    print("\n" + "=" * 45)
+    print("         Battery Analysis Summary")
+    print("=" * 45)
 
     for key, value in summary.items():
-        if isinstance(value, float):
-            print(f"{key:<20}: {value:.2f}")
+
+        if key == "Battery Profile":
+            print(f"{key:<20}: {value}")
+
+        elif "Voltage" in key:
+            print(f"{key:<20}: {value:.2f} V")
+
+        elif "SoC" in key:
+            print(f"{key:<20}: {value:.2f} %")
+
+        elif key == "Duration":
+            print(f"{key:<20}: {value} s")
+
         else:
             print(f"{key:<20}: {value}")
