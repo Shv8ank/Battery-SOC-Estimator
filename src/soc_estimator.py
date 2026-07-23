@@ -11,13 +11,15 @@ def estimate_soc(
     using a voltage profile.
     """
 
+    profile = profile.sort_values("Voltage(V)")
+
     voltage_points = profile["Voltage(V)"].to_numpy()
     soc_points = profile["SoC(%)"].to_numpy()
 
     soc = np.interp(
         voltage,
         voltage_points,
-        soc_points
+        soc_points,
     )
 
     return round(float(soc), 2)

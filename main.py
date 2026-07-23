@@ -15,7 +15,7 @@ from src.visualization import (
 from src.exporter import export_soc_data
 
 
-FILE_PATH = "data/raw/battery_discharge.csv"
+FILE_PATH = "data/raw/lithium_ion_discharge.csv"
 PROFILE_PATH = "data/profiles/lithium_ion.csv"
 
 

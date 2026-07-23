@@ -7,6 +7,10 @@ from src.profile_loader import load_battery_profile
 from src.soc_estimator import estimate_soc
 from src.statistics import generate_summary
 
+# -------------------------------------------------------
+# Page Configuration
+# -------------------------------------------------------
+
 st.set_page_config(
     page_title="Battery State of Charge Estimator",
     page_icon="🔋",
@@ -16,13 +20,12 @@ st.set_page_config(
 st.title("🔋 Battery State of Charge Estimator")
 
 st.write(
-    """
-    Estimate battery State of Charge (SoC)
-    using configurable battery profiles.
-    """
+    "Estimate battery State of Charge (SoC) using configurable battery profiles."
 )
 
-# ---------------- Sidebar ---------------- #
+# -------------------------------------------------------
+# Sidebar
+# -------------------------------------------------------
 
 st.sidebar.header("⚙️ Configuration")
 
@@ -38,22 +41,26 @@ battery_profile = st.sidebar.selectbox(
 )
 
 uploaded_file = st.sidebar.file_uploader(
-    "Upload Battery Data CSV",
+    "Upload Battery Discharge CSV",
     type="csv",
 )
 
-analyze = st.sidebar.button("Analyze Battery")
+analyze = st.sidebar.button(
+    "Analyze Battery",
+    use_container_width=True,
+)
 
 st.sidebar.markdown("---")
-st.sidebar.write("Selected Profile")
-st.sidebar.success(battery_profile)
+st.sidebar.success(f"Selected Profile\n\n**{battery_profile}**")
 
-# ---------------- Processing ---------------- #
+# -------------------------------------------------------
+# Analysis
+# -------------------------------------------------------
 
 if analyze:
 
     if uploaded_file is None:
-        st.warning("Please upload a battery data CSV file.")
+        st.warning("Please upload a battery discharge CSV file.")
 
     else:
 
@@ -61,8 +68,8 @@ if analyze:
 
             uploaded_path = Path("uploaded_battery.csv")
 
-            with open(uploaded_path, "wb") as f:
-                f.write(uploaded_file.getbuffer())
+            with open(uploaded_path, "wb") as file:
+                file.write(uploaded_file.getbuffer())
 
             battery_data = load_battery_data(uploaded_path)
 
@@ -83,40 +90,50 @@ if analyze:
             )
 
             st.success(
-                "Battery analysis completed successfully. Results are displayed below."
+                "Battery analysis completed successfully."
             )
 
-            # ---------------- Summary ---------------- #
+            st.divider()
 
-            st.subheader("📊 Battery Summary")
+            # ===================================================
+            # Battery Summary
+            # ===================================================
 
-            col1, col2, col3, col4 = st.columns(4)
+            with st.container(border=True):
 
-            with col1:
-                st.metric(
-                    "Initial Voltage",
-                    f"{summary['Initial Voltage']:.2f} V",
-                )
+                st.subheader("📊 Battery Summary")
 
-            with col2:
-                st.metric(
-                    "Average Voltage",
-                    f"{summary['Average Voltage']:.2f} V",
-                )
+                col1, col2, col3, col4 = st.columns(4)
 
-            with col3:
-                st.metric(
-                    "Average SoC",
-                    f"{summary['Average SoC']:.2f} %",
-                )
+                with col1:
+                    st.metric(
+                        "Initial Voltage",
+                        f"{summary['Initial Voltage']:.2f} V",
+                    )
 
-            with col4:
-                st.metric(
-                    "Duration",
-                    f"{summary['Duration']} s",
-                )
+                with col2:
+                    st.metric(
+                        "Average Voltage",
+                        f"{summary['Average Voltage']:.2f} V",
+                    )
 
-            # ---------------- Voltage Chart ---------------- #
+                with col3:
+                    st.metric(
+                        "Average SoC",
+                        f"{summary['Average SoC']:.2f} %",
+                    )
+
+                with col4:
+                    st.metric(
+                        "Duration",
+                        f"{summary['Duration']} s",
+                    )
+
+                st.caption(f"Battery Profile: **{battery_profile}**")
+
+            # ===================================================
+            # Voltage Plot
+            # ===================================================
 
             st.subheader("📈 Battery Voltage vs Time")
 
@@ -132,6 +149,7 @@ if analyze:
                 template="plotly_dark",
                 xaxis_title="Time (s)",
                 yaxis_title="Voltage (V)",
+                legend_title="",
             )
 
             st.plotly_chart(
@@ -139,7 +157,9 @@ if analyze:
                 use_container_width=True,
             )
 
-            # ---------------- SoC Chart ---------------- #
+            # ===================================================
+            # SoC Plot
+            # ===================================================
 
             st.subheader("🔋 Battery State of Charge")
 
@@ -155,6 +175,7 @@ if analyze:
                 template="plotly_dark",
                 xaxis_title="Time (s)",
                 yaxis_title="State of Charge (%)",
+                legend_title="",
             )
 
             st.plotly_chart(
@@ -162,26 +183,32 @@ if analyze:
                 use_container_width=True,
             )
 
-            # ---------------- Data Table ---------------- #
+            # ===================================================
+            # Processed Data
+            # ===================================================
 
             st.subheader("📄 Processed Battery Data")
 
             st.dataframe(
                 battery_data,
                 use_container_width=True,
+                hide_index=True,
             )
 
-            # ---------------- Download ---------------- #
+            # ===================================================
+            # Download
+            # ===================================================
 
             csv = battery_data.to_csv(index=False)
 
             st.download_button(
                 label="📥 Download Processed CSV",
                 data=csv,
-                file_name="processed_battery_data.csv",
+                file_name=f"{battery_profile.lower().replace(' ', '_')}_processed.csv",
                 mime="text/csv",
+                use_container_width=True,
             )
 
         except Exception as e:
 
-            st.error(f"Error: {e}")
+            st.error(f"❌ {e}")
