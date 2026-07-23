@@ -15,7 +15,7 @@ An interactive **Battery State of Charge (SoC) Estimator** built using **Python*
 
 🚀 **Try the live application here:**
 
-[https://your-app-name.streamlit.app](https://battery-soc-estimator.streamlit.app/)
+[battery-soc-estimator](https://battery-soc-estimator.streamlit.app/)
 
 ---
 
